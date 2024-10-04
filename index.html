@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация / Вход</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: 0 auto; padding: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px; width: 100%; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="form-title">Регистрация</h1>
+    <input type="text" id="username" placeholder="Никнейм" required>
+    <input type="password" id="password" placeholder="Пароль" required>
+    <button id="submit-button" onclick="submitForm()">Зарегистрироваться</button>
+    <p id="message"></p>
+    <p id="toggle-link" style="cursor: pointer; color: blue; text-decoration: underline;">Уже зарегистрированы? Войти.</p>
+</div>
+
+<script>
+    let isRegistering = true;
+
+    function submitForm() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (!username || !password) {
+            document.getElementById('message').textContent = 'Пожалуйста, заполните все поля.';
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+
+        if (isRegistering) {
+            // Регистрация нового пользователя
+            const existingUser = users.find(user => user.username === username);
+            if (existingUser) {
+                document.getElementById('message').textContent = 'Пользователь с таким ником уже существует.';
+                return;
+            }
+
+            // Сохранение нового пользователя
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('username', username);
+            window.location.href = 'Page1.html'; // Переход на страницу 1
+        } else {
+            // Вход существующего пользователя
+            const user = users.find(user => user.username === username && user.password === password);
+            if (user) {
+                localStorage.setItem('username', username);
+                window.location.href = 'Page1.html'; // Переход на страницу 1
+            } else {
+                document.getElementById('message').textContent = 'Неверный ник или пароль.';
+            }
+        }
+    }
+
+    document.getElementById('toggle-link').onclick = function() {
+        isRegistering = !isRegistering;
+        document.getElementById('form-title').textContent = isRegistering ? 'Регистрация' : 'Вход';
+        document.getElementById('submit-button').textContent = isRegistering ? 'Зарегистрироваться' : 'Войти';
+        document.getElementById('toggle-link').textContent = isRegistering ? 'Уже зарегистрированы? Войти.' : 'Нет аккаунта? Зарегистрироваться.';
+        document.getElementById('message').textContent = '';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+    };
+</script>
+
+</body>
+</html>

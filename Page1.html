@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница 1</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { display: flex; padding: 20px; }
+        .sidebar { width: 200px; background-color: #f0f0f0; padding: 20px; border-right: 2px solid #ccc; }
+        .sidebar h2 { margin: 0 0 15px; }
+        .sidebar button { display: block; width: 100%; padding: 10px; margin: 10px 0; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .sidebar button:hover { background-color: #0056b3; }
+        .content { flex-grow: 1; text-align: center; padding: 20px; }
+        .profile { display: flex; align-items: center; position: fixed; top: 20px; right: 20px; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background-color: orange; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }
+        .username { margin-left: 10px; align-self: center; cursor: pointer; color: blue; text-decoration: underline; }
+        .logout-button { margin-top: 10px; }
+        .search-container { margin-bottom: 20px; }
+        input[type="text"] { padding: 10px; width: 300px; border: 1px solid #ccc; border-radius: 5px; }
+        .search-results { margin-top: 20px; }
+        .search-results div { cursor: pointer; color: blue; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <h2>Меню</h2>
+        <button onclick="navigateTo('home')">Главная страница</button>
+        <button onclick="navigateTo('friends')">Друзья</button>
+        <button onclick="navigateTo('contacts')">Контакты</button>
+        <button onclick="navigateTo('settings')">Настройки</button>
+    </div>
+
+    <div class="content">
+        <h1>Добро пожаловать на страницу 1!</h1>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Поиск по нику..." oninput="searchUsers()">
+        </div>
+        
+        <div class="search-results" id="search-results"></div>
+    </div>
+
+    <div class="profile">
+        <div class="avatar" id="avatar">Я</div>
+        <span class="username" id="username" onclick="goToProfile()"></span>
+        <button class="logout-button" onclick="logout()">Выйти</button>
+    </div>
+</div>
+
+<script>
+    // Функция для загрузки зарегистрированных пользователей
+    function loadUsers() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        return users.map(user => user.username);
+    }
+
+    // Функция для загрузки имени пользователя
+    function loadProfile() {
+        const username = localStorage.getItem('username');
+
+        if (username) {
+            document.getElementById('username').textContent = username;
+        } else {
+            document.getElementById('username').textContent = 'Гость';
+        }
+    }
+
+    // Функция выхода
+    function logout() {
+        localStorage.removeItem('username');
+        window.location.href = 'index.html'; // Переход на страницу входа/регистрации
+    }
+
+    // Функция навигации
+    function navigateTo(page) {
+        if (page === 'settings') {
+            window.location.href = 'Setting.html';
+        } else {
+            alert(`Переход на страницу: ${page}`);
+            // Здесь вы можете добавить логику перехода на соответствующие страницы
+        }
+    }
+
+    // Функция для применения темы
+    function applyTheme() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            document.body.style.backgroundColor = '#333';
+            document.body.style.color = '#fff';
+        } else {
+            document.body.style.backgroundColor = '#fff';
+            document.body.style.color = '#000';
+        }
+    }
+
+    // Функция для поиска пользователей
+    function searchUsers() {
+        const input = document.getElementById('search-input').value.toLowerCase();
+        const users = loadUsers();
+        const results = users.filter(user => user.toLowerCase().includes(input));
+        displayResults(results);
+    }
+
+    // Функция для отображения результатов поиска
+    function displayResults(results) {
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = ''; // Очистка предыдущих результатов
+        
+        if (results.length === 0) {
+            resultsContainer.innerHTML = '<p>Пользователи не найдены.</p>';
+        } else {
+            results.forEach(user => {
+                const div = document.createElement('div');
+                div.textContent = user;
+                div.onclick = () => goToProfile(user); // Переход к профилю пользователя
+                resultsContainer.appendChild(div);
+            });
+        }
+    }
+
+    // Функция перехода в профиль
+    function goToProfile(username = localStorage.getItem('username')) {
+        window.location.href = `Profile.html?user=${encodeURIComponent(username)}`;
+    }
+
+    // Загружаем профиль и применяем тему при загрузке страницы
+    loadProfile();
+    applyTheme();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: 0 auto; text-align: center; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Настройки темы</h1>
+    <button onclick="setTheme('light')">Светлая тема</button>
+    <button onclick="setTheme('dark')">Темная тема</button>
+    <button onclick="goBack()">Назад</button>
+</div>
+
+<script>
+    // Установка темы
+    function setTheme(theme) {
+        localStorage.setItem('theme', theme);
+        applyTheme();
+    }
+
+    // Применение темы
+    function applyTheme() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            document.body.style.backgroundColor = '#333';
+            document.body.style.color = '#fff';
+        } else {
+            document.body.style.backgroundColor = '#fff';
+            document.body.style.color = '#000';
+        }
+    }
+
+    // Функция для возврата на предыдущую страницу
+    function goBack() {
+        window.history.back();
+    }
+
+    // Применение темы при загрузке страницы
+    applyTheme();
+</script>
+
+</body>
+</html>
